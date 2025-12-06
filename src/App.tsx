@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +24,11 @@ const AppContent = () => {
   const isLoadingPage = location.pathname === "/";
   const isAuthPage = location.pathname === "/auth";
   const showSpline = isLoadingPage || isAuthPage;
+
+  // Scroll to top on route change
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
 
   return (
     <>
