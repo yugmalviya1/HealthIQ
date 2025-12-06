@@ -10,11 +10,6 @@ const footerLinks = {
   company: [
     { name: "About Us", href: "/about" },
   ],
-  legal: [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-    { name: "HIPAA Compliance", href: "/hipaa" },
-  ],
 };
 
 export function Footer() {
@@ -73,21 +68,10 @@ export function Footer() {
 
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-12 pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
             © 2025 HealthIQ AI Created by Team Dedsec
           </p>
-          <div className="flex items-center gap-6">
-            {footerLinks.legal.map((link) => (
-              <Link
-                key={link.name}
-                to={link.href}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
         </div>
       </div>
     </footer>

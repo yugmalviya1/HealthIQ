@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Search, AlertCircle, CheckCircle2, ArrowRight, Stethoscope, Brain, Heart, Bone, Eye, Ear } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const bodyAreas = [
   { id: "head", name: "Head & Neurological", icon: Brain, symptoms: ["Headache", "Dizziness", "Migraine", "Memory issues"] },
@@ -212,9 +213,11 @@ const Symptoms = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button variant="hero" className="flex-1">
-                    Find Recommended Doctors
-                    <ArrowRight className="w-4 h-4" />
+                  <Button asChild variant="hero" className="flex-1">
+                    <Link to="/doctors">
+                      Find Recommended Doctors
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
                   </Button>
                   <Button
                     variant="outline"

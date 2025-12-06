@@ -6,6 +6,7 @@ import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
+import { motion } from "framer-motion";
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -97,14 +98,24 @@ const AuthCard = () => {
   };
 
   return (
-    <div className="glass rounded-2xl p-8 w-full max-w-md animate-slide-up shadow-2xl" style={{ backdropFilter: 'blur(20px)', backgroundColor: 'rgba(15, 23, 42, 0.7)', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+    <div className="glass rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl bg-card/80 border border-border">
       {/* Logo & Title */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gradient font-display tracking-tight">HealthIQ</h1>
-      </div>
+      <motion.div 
+        className="text-center mb-8"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-3xl sm:text-4xl font-bold text-gradient font-display tracking-tight">HealthIQ</h1>
+      </motion.div>
 
       {/* Google Auth Button */}
-      <Button
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <Button
         variant="outline"
         className="w-full mb-6 h-12 bg-secondary/50 border-border hover:bg-secondary hover:border-primary/50 transition-all duration-300"
         onClick={handleGoogleAuth}
@@ -113,26 +124,38 @@ const AuthCard = () => {
         <GoogleIcon />
         <span className="ml-3">Continue with Google</span>
       </Button>
+      </motion.div>
 
       {/* Divider */}
-      <div className="relative mb-6">
+      <motion.div 
+        className="relative mb-6"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-white/20" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-4 text-white/70" style={{ backgroundColor: 'rgba(15, 23, 42, 0.7)' }}>or continue with email</span>
+          <span className="px-4 text-muted-foreground bg-card">or continue with email</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Email/Password Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <motion.form 
+        onSubmit={handleSubmit} 
+        className="space-y-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+      >
         <div>
           <Input
             type="email"
             placeholder="Email address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-12 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-primary focus:bg-white/15 transition-all duration-300"
+            className="h-12 bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-secondary transition-all duration-300"
             required
             disabled={isLoading}
             autoComplete="email"
@@ -144,7 +167,7 @@ const AuthCard = () => {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-12 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-primary focus:bg-white/15 transition-all duration-300"
+            className="h-12 bg-secondary/50 border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:bg-secondary transition-all duration-300"
             required
             disabled={isLoading}
             autoComplete="current-password"
@@ -163,10 +186,15 @@ const AuthCard = () => {
             </>
           ) : isLogin ? "Sign In" : "Create Account"}
         </Button>
-      </form>
+      </motion.form>
 
       {/* Toggle Login/Signup */}
-      <p className="text-center mt-6 text-muted-foreground">
+      <motion.p 
+        className="text-center mt-6 text-muted-foreground"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+      >
         {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
         <button
           onClick={() => setIsLogin(!isLogin)}
@@ -175,7 +203,7 @@ const AuthCard = () => {
         >
           {isLogin ? "Sign up" : "Sign in"}
         </button>
-      </p>
+      </motion.p>
     </div>
   );
 };

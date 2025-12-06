@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 import { Search, UserCheck, CalendarCheck, HeartPulse } from "lucide-react";
+import { motion } from "framer-motion";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { scrollFadeIn, scrollSlideLeft, scrollSlideRight } from "@/lib/animations";
 
 const steps = [
   {
@@ -33,10 +36,18 @@ const steps = [
 ];
 
 export function HowItWorks() {
+  const headerAnimation = useScrollAnimation();
+
   return (
     <section className="py-24 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <motion.div 
+          ref={headerAnimation.ref}
+          className="text-center max-w-2xl mx-auto mb-16"
+          initial="hidden"
+          animate={headerAnimation.isVisible ? "visible" : "hidden"}
+          variants={scrollFadeIn}
+        >
           <span className="inline-block px-4 py-1.5 rounded-full bg-accent text-accent-foreground text-sm font-medium mb-4">
             How It Works
           </span>
@@ -47,7 +58,7 @@ export function HowItWorks() {
           <p className="text-muted-foreground text-lg">
             Four simple steps to take control of your health journey.
           </p>
-        </div>
+        </motion.div>
 
         <div className="relative">
           {/* Connection line */}
@@ -57,7 +68,29 @@ export function HowItWorks() {
             {steps.map((step, index) => {
               const Icon = step.icon;
               return (
-                <div key={step.number} className="relative">
+                <StepCard key={step.number} step={step} Icon={Icon} index={index} />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function StepCard({ step, Icon, index }: { step: typeof steps[0]; Icon: any; index: number }) {
+  const animation = useScrollAnimation();
+  const isEven = index % 2 === 0;
+
+  return (
+    <motion.div
+      ref={animation.ref}
+      initial="hidden"
+      animate={animation.isVisible ? "visible" : "hidden"}
+      variants={isEven ? scrollSlideLeft : scrollSlideRight}
+      transition={{ delay: index * 0.15 }}
+      className="relative"
+    >
                   {/* Step card */}
                   <Link to={step.href} className="text-center group block cursor-pointer">
                     <div className="relative inline-flex mb-6">
@@ -76,20 +109,14 @@ export function HowItWorks() {
                     </p>
                   </Link>
 
-                  {/* Arrow for desktop */}
-                  {index < steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-10 -right-4 transform">
-                      <svg className="w-8 h-8 text-primary/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+      {/* Arrow for desktop */}
+      {index < steps.length - 1 && (
+        <div className="hidden lg:block absolute top-10 -right-4 transform">
+          <svg className="w-8 h-8 text-primary/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
         </div>
-      </div>
-    </section>
+      )}
+    </motion.div>
   );
 }

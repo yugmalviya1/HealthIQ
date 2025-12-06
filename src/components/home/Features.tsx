@@ -1,4 +1,7 @@
 import { Stethoscope, Users, Calendar, MessageCircle, FileText, Bell } from "lucide-react";
+import { motion } from "framer-motion";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { scrollFadeIn, scrollScale } from "@/lib/animations";
 
 const features = [
   {
@@ -40,13 +43,21 @@ const features = [
 ];
 
 export function Features() {
+  const headerAnimation = useScrollAnimation();
+
   return (
     <section className="py-24 bg-gradient-soft relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-health-teal/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-health-blue/5 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <motion.div 
+          ref={headerAnimation.ref}
+          className="text-center max-w-2xl mx-auto mb-16"
+          initial="hidden"
+          animate={headerAnimation.isVisible ? "visible" : "hidden"}
+          variants={scrollFadeIn}
+        >
           <span className="inline-block px-4 py-1.5 rounded-full bg-accent text-accent-foreground text-sm font-medium mb-4">
             Features
           </span>
@@ -57,17 +68,33 @@ export function Features() {
           <p className="text-muted-foreground text-lg">
             A comprehensive suite of tools designed to make healthcare accessible, organized, and intelligent.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <div
-                key={feature.title}
-                className="group relative p-6 lg:p-8 rounded-2xl bg-card border border-border hover:border-primary/30 shadow-card hover:shadow-card-hover transition-all duration-500"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
+              <FeatureCard key={feature.title} feature={feature} Icon={Icon} index={index} />
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeatureCard({ feature, Icon, index }: { feature: typeof features[0]; Icon: any; index: number }) {
+  const animation = useScrollAnimation();
+
+  return (
+    <motion.div
+      ref={animation.ref}
+      initial="hidden"
+      animate={animation.isVisible ? "visible" : "hidden"}
+      variants={scrollScale}
+      transition={{ delay: index * 0.1 }}
+      className="group relative p-6 lg:p-8 rounded-2xl bg-card border border-border hover:border-primary/30 shadow-card hover:shadow-lg transition-all duration-300"
+    >
                 <div className={`w-14 h-14 rounded-2xl bg-${feature.color}/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                   <Icon className={`w-7 h-7 text-${feature.color}`} />
                 </div>
@@ -78,13 +105,8 @@ export function Features() {
                   {feature.description}
                 </p>
 
-                {/* Hover decoration */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+      {/* Hover decoration */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+    </motion.div>
   );
 }

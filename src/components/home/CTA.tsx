@@ -1,12 +1,23 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { scrollScale } from "@/lib/animations";
 
 export function CTA() {
+  const animation = useScrollAnimation();
+
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-hero p-12 lg:p-20">
+        <motion.div 
+          ref={animation.ref}
+          initial="hidden"
+          animate={animation.isVisible ? "visible" : "hidden"}
+          variants={scrollScale}
+          className="relative overflow-hidden rounded-3xl bg-gradient-hero p-12 lg:p-20"
+        >
           {/* Background decorations */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary-foreground/10 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary-foreground/10 rounded-full blur-3xl" />
@@ -48,7 +59,7 @@ export function CTA() {
               </Button>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

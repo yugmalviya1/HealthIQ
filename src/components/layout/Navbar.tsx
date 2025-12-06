@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Heart, Stethoscope, Calendar, MessageCircle, User } from "lucide-react";
+import { Menu, X, Heart, Stethoscope, Calendar, MessageCircle, User, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const navLinks = [
   { name: "Home", href: "/home", icon: Heart },
@@ -16,6 +17,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useFirebaseAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -56,6 +58,23 @@ export function Navbar() {
                 </Link>
               );
             })}
+            
+            {/* Theme Toggle */}
+            <Button
+              onClick={toggleTheme}
+              variant="ghost"
+              size="sm"
+              className="ml-2 relative overflow-hidden"
+            >
+              <div className="transition-all duration-500 ease-in-out transform hover:rotate-180">
+                {theme === "light" ? (
+                  <Moon className="w-5 h-5 transition-transform duration-500" />
+                ) : (
+                  <Sun className="w-5 h-5 transition-transform duration-500" />
+                )}
+              </div>
+            </Button>
+
             {user && (
               <Button
                 onClick={handleLogout}
@@ -112,6 +131,28 @@ export function Navbar() {
                 </Link>
               );
             })}
+            
+            {/* Theme Toggle Mobile */}
+            <Button
+              onClick={toggleTheme}
+              variant="ghost"
+              className="w-full justify-start"
+            >
+              <div className="transition-all duration-500 ease-in-out transform hover:rotate-180 flex items-center">
+                {theme === "light" ? (
+                  <>
+                    <Moon className="w-5 h-5 mr-3 transition-transform duration-500" />
+                    Dark Mode
+                  </>
+                ) : (
+                  <>
+                    <Sun className="w-5 h-5 mr-3 transition-transform duration-500" />
+                    Light Mode
+                  </>
+                )}
+              </div>
+            </Button>
+
             {user && (
               <Button
                 onClick={() => {

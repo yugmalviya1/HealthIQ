@@ -1,15 +1,13 @@
 import AuthCard from "@/components/AuthCard";
 import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { motion } from "framer-motion";
+import { slideInVariants, staggerContainer } from "@/lib/animations";
 
 const LandingAuth = () => {
   const { user, loading } = useFirebaseAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [fadeIn, setFadeIn] = useState(false);
-
-  // Removed redirect logic - allow direct access to /auth page
 
   useEffect(() => {
     if (!loading && user) {
@@ -17,34 +15,37 @@ const LandingAuth = () => {
     }
   }, [user, loading, navigate]);
 
-  useEffect(() => {
-    // Trigger fade-in animation after component mounts
-    const timer = setTimeout(() => {
-      setFadeIn(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div className={`relative min-h-screen w-full overflow-hidden transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+    <motion.div 
+      className="relative min-h-screen w-full overflow-hidden"
+      initial="hidden"
+      animate="visible"
+      variants={staggerContainer}
+    >
       {/* Main Content */}
       <main className="relative min-h-screen flex flex-col items-center justify-center px-4 py-12" style={{ zIndex: 10 }}>
         {/* Hero Section */}
-        <div className="text-center mb-8 animate-fade-in">
-          <h2 className="text-2xl md:text-3xl font-medium text-white/90 max-w-lg mx-auto drop-shadow-lg">
+        <motion.div 
+          className="text-center mb-8"
+          variants={slideInVariants}
+          custom={0}
+        >
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-white/90 max-w-lg mx-auto drop-shadow-lg px-4">
             Your personal health companion powered by artificial intelligence
           </h2>
-        </div>
+        </motion.div>
 
         {/* Auth Card */}
-        <AuthCard />
+        <motion.div
+          variants={slideInVariants}
+          custom={1}
+        >
+          <AuthCard />
+        </motion.div>
 
-        {/* Footer */}
-        <footer className="mt-12 text-center text-white/70 text-sm animate-fade-in-delay">
-          <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
-        </footer>
+
       </main>
-    </div>
+    </motion.div>
   );
 };
 
