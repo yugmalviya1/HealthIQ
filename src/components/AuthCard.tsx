@@ -98,7 +98,7 @@ const AuthCard = () => {
   };
 
   return (
-    <div className="glass rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl bg-card/80 border border-border">
+    <div className="glass rounded-2xl p-6 sm:p-8 w-full max-w-md shadow-2xl bg-card/95 backdrop-blur-xl border border-border">
       {/* Logo & Title */}
       <motion.div 
         className="text-center mb-8"
