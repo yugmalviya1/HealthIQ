@@ -41,7 +41,7 @@ export function CTA() {
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
-              <Button asChild size="xl" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button asChild size="xl" variant="outline" className="border-primary-foreground/50 bg-white/10 text-white hover:bg-white/20 hover:text-white font-semibold shadow-lg backdrop-blur-sm">
                 <Link to="/doctors">
                   Explore Doctors
                 </Link>

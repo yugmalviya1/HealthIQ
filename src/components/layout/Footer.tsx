@@ -75,7 +75,7 @@ export function Footer() {
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 HealthIQ AI. All rights reserved.
+            © 2025 HealthIQ AI Created by Team Dedsec
           </p>
           <div className="flex items-center gap-6">
             {footerLinks.legal.map((link) => (

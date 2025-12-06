@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Heart, Stethoscope, Calendar, MessageCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 
 const navLinks = [
-  { name: "Home", href: "/", icon: Heart },
+  { name: "Home", href: "/home", icon: Heart },
   { name: "Symptoms", href: "/symptoms", icon: Stethoscope },
   { name: "Doctors", href: "/doctors", icon: User },
   { name: "Appointments", href: "/appointments", icon: Calendar },
@@ -14,13 +15,20 @@ const navLinks = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useFirebaseAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/home" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-hero flex items-center justify-center shadow-glow">
               <Heart className="w-5 h-5 text-primary-foreground" />
             </div>
@@ -48,6 +56,16 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {user && (
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="ml-2"
+              >
+                Logout
+              </Button>
+            )}
           </div>
 
 
@@ -94,6 +112,18 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {user && (
+              <Button
+                onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}
+                variant="outline"
+                className="w-full justify-start"
+              >
+                Logout
+              </Button>
+            )}
           </div>
         </div>
       </div>

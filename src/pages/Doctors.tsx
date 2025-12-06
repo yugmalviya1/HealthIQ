@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { ChatWidget } from "@/components/chat/ChatWidget";
 import { Button } from "@/components/ui/button";
 import { DoctorCard, Doctor } from "@/components/doctors/DoctorCard";
 import { DoctorProfileSheet } from "@/components/doctors/DoctorProfileSheet";
@@ -144,8 +141,7 @@ const Doctors = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
+    <>
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           {/* Header */}
@@ -248,8 +244,6 @@ const Doctors = () => {
           </div>
         </div>
       </main>
-      <Footer />
-      <ChatWidget />
 
       {/* Doctor Profile Sheet */}
       <DoctorProfileSheet
@@ -257,7 +251,7 @@ const Doctors = () => {
         isOpen={isProfileOpen}
         onClose={handleCloseProfile}
       />
-    </div>
+    </>
   );
 };
 

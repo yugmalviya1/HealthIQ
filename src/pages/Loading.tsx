@@ -27,8 +27,10 @@ const Loading = () => {
   useEffect(() => {
     if (progress >= 100) {
       setFadeOut(true);
+      // Mark that user has seen the loading screen
+      sessionStorage.setItem('hasSeenLoading', 'true');
       const timeout = setTimeout(() => {
-        navigate("/auth");
+        navigate("/auth", { state: { fromLoading: true } });
       }, 800);
       return () => clearTimeout(timeout);
     }
@@ -50,16 +52,36 @@ const Loading = () => {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full max-w-md space-y-3">
-          <div className="relative w-full">
-            <div className="w-full h-2.5 bg-white/10 border border-white/20 rounded-full overflow-hidden">
+        <div className="w-full max-w-md" style={{ marginTop: '2rem' }}>
+          <div className="relative w-full" style={{ marginBottom: '1rem' }}>
+            <div 
+              style={{
+                width: '100%',
+                height: '12px',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                border: '2px solid rgba(255, 255, 255, 0.4)',
+                borderRadius: '9999px',
+                overflow: 'hidden',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
+              }}
+            >
               <div 
-                className="h-full bg-gradient-to-r from-teal-400 to-teal-500 transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
+                style={{ 
+                  width: `${progress}%`,
+                  height: '100%',
+                  background: 'linear-gradient(to right, #2dd4bf, #14b8a6, #06b6d4)',
+                  transition: 'width 0.3s ease-out',
+                  boxShadow: '0 0 20px rgba(45, 212, 191, 0.6)'
+                }}
               />
             </div>
           </div>
-          <p className="text-center text-white/70 text-sm font-medium">
+          <p style={{ 
+            textAlign: 'center', 
+            color: 'white', 
+            fontSize: '1.125rem',
+            fontWeight: '600'
+          }}>
             {Math.round(progress)}%
           </p>
         </div>

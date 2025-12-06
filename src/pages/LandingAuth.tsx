@@ -1,12 +1,15 @@
 import AuthCard from "@/components/AuthCard";
-import { useAuth } from "@/contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const LandingAuth = () => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useFirebaseAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [fadeIn, setFadeIn] = useState(false);
+
+  // Removed redirect logic - allow direct access to /auth page
 
   useEffect(() => {
     if (!loading && user) {

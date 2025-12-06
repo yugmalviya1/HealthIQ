@@ -6,6 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Doctor } from "./DoctorCard";
 import { toast } from "sonner";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { appointmentService } from "@/services/appointmentService";
+import { useNavigate } from "react-router-dom";
 
 interface DoctorProfileSheetProps {
   doctor: Doctor | null;
@@ -25,6 +28,8 @@ const quickTimeSlots = [
 ];
 
 export const DoctorProfileSheet = ({ doctor, isOpen, onClose }: DoctorProfileSheetProps) => {
+  const { user } = useFirebaseAuth();
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<string>("today");
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string>("video");
@@ -33,17 +38,42 @@ export const DoctorProfileSheet = ({ doctor, isOpen, onClose }: DoctorProfileShe
 
   if (!doctor) return null;
 
-  const handleBookAppointment = () => {
+  const handleBookAppointment = async () => {
     if (!selectedTime) {
       toast.error("Please select a time slot");
       return;
     }
+
+    if (!user) {
+      toast.error("Please log in to book an appointment");
+      navigate("/auth");
+      return;
+    }
+
     setIsBooking(true);
-    setTimeout(() => {
-      setIsBooking(false);
-      setIsBooked(true);
-      toast.success(`Appointment booked with ${doctor.name}`);
-    }, 1000);
+
+    const { date } = getDateLabel(selectedDate);
+    const appointmentData = {
+      userId: user.uid,
+      doctorId: doctor.id,
+      doctorName: doctor.name,
+      specialty: doctor.specialty,
+      date: date.toISOString().split('T')[0],
+      time: selectedTime,
+      status: "scheduled" as const,
+    };
+
+    const { id, error } = await appointmentService.createAppointment(appointmentData);
+
+    setIsBooking(false);
+
+    if (error) {
+      toast.error(`Failed to book appointment: ${error.message}`);
+      return;
+    }
+
+    setIsBooked(true);
+    toast.success(`Appointment booked with ${doctor.name}`);
   };
 
   const handleClose = () => {

@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { ChatWidget } from "@/components/chat/ChatWidget";
 import { Button } from "@/components/ui/button";
 import { Search, AlertCircle, CheckCircle2, ArrowRight, Stethoscope, Brain, Heart, Bone, Eye, Ear } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -42,9 +39,7 @@ const Symptoms = () => {
   const selectedBodyArea = bodyAreas.find(area => area.id === selectedArea);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="pt-24 pb-16">
+    <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-12">
@@ -237,9 +232,6 @@ const Symptoms = () => {
           )}
         </div>
       </main>
-      <Footer />
-      <ChatWidget />
-    </div>
   );
 };
 

@@ -73,16 +73,24 @@ export function Hero() {
           <div className="relative animate-fade-in" style={{ animationDelay: "300ms" }}>
             <div className="relative w-full aspect-square max-w-lg mx-auto">
               {/* Main card with Spline animation */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-card shadow-card border border-border overflow-hidden group cursor-pointer">
+              <div className="absolute inset-0 rounded-3xl bg-gradient-card shadow-card border border-border overflow-hidden">
                 <iframe 
                   src="https://app.spline.design/file/ed3b52af-7f6b-4fe9-b3dc-d3eedbf00f82?view=preview" 
-                  width="100%" 
-                  height="100%" 
-                  allowFullScreen 
+                  width="150%" 
+                  height="150%" 
                   title="3D Health Animation"
-                  className="absolute inset-0 w-full h-full border-0 pointer-events-auto"
-                  style={{ background: 'transparent' }}
+                  className="absolute border-0"
+                  style={{ 
+                    background: 'transparent',
+                    pointerEvents: 'auto',
+                    top: '-25%',
+                    left: '-25%',
+                  }}
                 />
+              </div>
+              {/* Click to interact text */}
+              <div className="absolute -bottom-8 left-0 right-0 text-center">
+                <p className="text-sm text-muted-foreground italic">Click to interact</p>
               </div>
             </div>
           </div>

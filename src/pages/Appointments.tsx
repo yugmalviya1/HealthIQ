@@ -1,7 +1,4 @@
-import { useState } from "react";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { ChatWidget } from "@/components/chat/ChatWidget";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppointmentCard, Appointment } from "@/components/appointments/AppointmentCard";
@@ -12,6 +9,9 @@ import { BookingSuccess } from "@/components/appointments/BookingSuccess";
 import { Calendar, List, Plus, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
+import { appointmentService } from "@/services/appointmentService";
+import { useNavigate } from "react-router-dom";
 
 // Mock data for existing appointments
 const mockAppointments: Appointment[] = [
@@ -54,18 +54,98 @@ const mockAppointments: Appointment[] = [
 ];
 
 const Appointments = () => {
+  const { user } = useFirebaseAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("book");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [selectedType, setSelectedType] = useState<string>("video");
   const [step, setStep] = useState(1);
   const [isBooked, setIsBooked] = useState(false);
-  const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filterStatus, setFilterStatus] = useState<"all" | "upcoming" | "completed" | "cancelled">("all");
+  const [loading, setLoading] = useState(true);
 
-  const handleBooking = () => {
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+    }
+  }, [user, navigate]);
+
+  // Load appointments from Firebase
+  useEffect(() => {
+    const loadAppointments = async () => {
+      if (!user) return;
+      
+      console.log("Loading appointments for user:", user.uid);
+      setLoading(true);
+      
+      try {
+        const { appointments: firebaseAppointments, error } = await appointmentService.getUserAppointments(user.uid);
+        
+        if (error) {
+          console.error("Error loading appointments:", error);
+          toast.error(`Failed to load appointments: ${error.message}`);
+        } else {
+          console.log("Loaded appointments:", firebaseAppointments);
+          // Convert Firebase appointments to component format
+          const convertedAppointments: Appointment[] = firebaseAppointments.map(apt => ({
+            id: apt.id!,
+            date: new Date(apt.date),
+            time: apt.time,
+            type: "video" as const, // Default type
+            doctorName: apt.doctorName,
+            specialty: apt.specialty,
+            status: apt.status,
+          }));
+          setAppointments(convertedAppointments);
+        }
+      } catch (err) {
+        console.error("Unexpected error loading appointments:", err);
+        toast.error("An unexpected error occurred while loading appointments");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAppointments();
+  }, [user]);
+
+  const handleBooking = async () => {
+    if (!user) {
+      toast.error("Please log in to book an appointment");
+      navigate("/auth");
+      return;
+    }
+
+    console.log("Booking appointment for user:", user.uid);
+
+    const appointmentData = {
+      userId: user.uid,
+      doctorId: "doctor_" + Date.now(),
+      doctorName: "Dr. Available",
+      specialty: "General Practitioner",
+      date: selectedDate.toISOString().split('T')[0],
+      time: selectedTime!,
+      status: "scheduled" as const,
+    };
+
+    console.log("Appointment data:", appointmentData);
+
+    const { id, error } = await appointmentService.createAppointment(appointmentData);
+
+    if (error) {
+      console.error("Booking error:", error);
+      toast.error(`Failed to book appointment: ${error.message}`);
+      return;
+    }
+
+    console.log("Appointment created with ID:", id);
+
+    // Add to local state
     const newAppointment: Appointment = {
-      id: Date.now().toString(),
+      id: id!,
       date: selectedDate,
       time: selectedTime!,
       type: selectedType as "video" | "phone" | "inperson",
@@ -73,8 +153,10 @@ const Appointments = () => {
       specialty: "General Practitioner",
       status: "upcoming",
     };
+    
     setAppointments([newAppointment, ...appointments]);
     setIsBooked(true);
+    toast.success("Appointment booked successfully!");
   };
 
   const handleBookAnother = () => {
@@ -90,10 +172,16 @@ const Appointments = () => {
     setActiveTab("manage");
   };
 
-  const handleCancelAppointment = (id: string) => {
-    setAppointments(appointments.map(apt => 
-      apt.id === id ? { ...apt, status: "cancelled" as const } : apt
-    ));
+  const handleCancelAppointment = async (id: string) => {
+    const { error } = await appointmentService.cancelAppointment(id);
+
+    if (error) {
+      toast.error("Failed to cancel appointment");
+      return;
+    }
+
+    // Remove from local state
+    setAppointments(appointments.filter(apt => apt.id !== id));
     toast.success("Appointment cancelled successfully");
   };
 
@@ -108,9 +196,7 @@ const Appointments = () => {
   const upcomingCount = appointments.filter(apt => apt.status === "upcoming").length;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="pt-24 pb-16">
+    <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="text-center max-w-2xl mx-auto mb-8">
@@ -224,6 +310,13 @@ const Appointments = () => {
             {/* Manage Appointments */}
             <TabsContent value="manage">
               <div className="space-y-6">
+                {loading ? (
+                  <div className="text-center py-16">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading appointments...</p>
+                  </div>
+                ) : (
+                  <>
                 {/* Filter Buttons */}
                 <div className="flex flex-wrap gap-2">
                   {(["all", "upcoming", "completed", "cancelled"] as const).map((status) => (
@@ -273,14 +366,13 @@ const Appointments = () => {
                     ))}
                   </div>
                 )}
+                </>
+                )}
               </div>
             </TabsContent>
           </Tabs>
         </div>
       </main>
-      <Footer />
-      <ChatWidget />
-    </div>
   );
 };
 
