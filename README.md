@@ -268,7 +268,7 @@ This project is released under the **MIT License**, allowing open, free use.
 
 ## 👨‍💻 Developer
 
-Built with ❤️ by the HealthIQ AI team
+Built with ❤️ by Dedsec
 
 ---
 
